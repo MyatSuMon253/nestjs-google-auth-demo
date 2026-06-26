@@ -1,7 +1,54 @@
+import { useState } from "react";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import "./App.css";
 
+interface UserProfile {
+  email: string;
+  name: string;
+  picture: string;
+  sub: string;
+  [key: string]: unknown;
+}
+
+function decodeJwtPayload(token: string): UserProfile | null {
+  try {
+    const base64 = token.split(".")[1];
+    const json = atob(base64);
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
 function App() {
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [status, setStatus] = useState<string>("");
+
+  const handleSuccess = (response: { credential?: string }) => {
+    if (response.credential) {
+      const profile = decodeJwtPayload(response.credential);
+      if (profile) {
+        setUser(profile);
+        setStatus("sending");
+        fetch("http://localhost:3000/auth/google-authentication", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: response.credential,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            setStatus("success");
+          })
+          .catch(() => setStatus("error"));
+      }
+    }
+  };
+
   return (
     <GoogleOAuthProvider clientId="73028571094-ok0geg8ovenb4bv3ash97eighk41kb77.apps.googleusercontent.com">
       <div className="container">
@@ -10,25 +57,32 @@ function App() {
           Sign in with Google and send the credential token to your NestJS backend
           at <code>/auth/google-authentication</code>
         </p>
-        <div className="card">
-          <GoogleLogin
-            text="signin_with"
-            onSuccess={(response) => {
-              console.log(response);
-              fetch("http://localhost:3000/auth/google-authentication", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  token: response.credential,
-                }),
-              })
-                .then((response) => response.json())
-                .then((data) => console.log(data));
-            }}
-          />
-        </div>
+
+        {!user ? (
+          <div className="card">
+            <GoogleLogin
+              text="signin_with"
+              onSuccess={handleSuccess}
+              onError={() => setStatus("error")}
+            />
+          </div>
+        ) : (
+          <div className="card profile-card">
+            <img src={user.picture} alt={user.name} className="avatar" />
+            <h2>{user.name}</h2>
+            <p>{user.email}</p>
+            <p className="sub-tag">Google ID: {user.sub}</p>
+            {status === "sending" && (
+              <p className="status pending">Authenticating with backend...</p>
+            )}
+            {status === "success" && (
+              <p className="status ok">Backend authenticated successfully</p>
+            )}
+            {status === "error" && (
+              <p className="status fail">Backend authentication failed</p>
+            )}
+          </div>
+        )}
       </div>
     </GoogleOAuthProvider>
   );

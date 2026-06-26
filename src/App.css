@@ -39,4 +39,58 @@ h1 {
   border-radius: 12px;
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
+  min-width: 320px;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-card {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.profile-card h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.profile-card p {
+  margin: 0;
+  color: var(--text);
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.sub-tag {
+  font-size: 0.8rem;
+  color: var(--text);
+  opacity: 0.7;
+  word-break: break-all;
+  max-width: 280px;
+}
+
+.status {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status.pending {
+  color: #f59e0b;
+}
+
+.status.ok {
+  color: #10b981;
+}
+
+.status.fail {
+  color: #ef4444;
 }
