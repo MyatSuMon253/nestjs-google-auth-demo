@@ -23,6 +23,7 @@ function decodeJwtPayload(token: string): UserProfile | null {
 function App() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [status, setStatus] = useState<string>("");
+  const [backendResponse, setBackendResponse] = useState<Record<string, unknown> | null>(null);
 
   const handleSuccess = (response: { credential?: string }) => {
     if (response.credential) {
@@ -41,10 +42,13 @@ function App() {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
+            setBackendResponse(data);
             setStatus("success");
           })
-          .catch(() => setStatus("error"));
+          .catch((err: Error) => {
+            setBackendResponse({ error: err.message });
+            setStatus("error");
+          });
       }
     }
   };
@@ -67,19 +71,33 @@ function App() {
             />
           </div>
         ) : (
-          <div className="card profile-card">
-            <img src={user.picture} alt={user.name} className="avatar" />
-            <h2>{user.name}</h2>
-            <p>{user.email}</p>
-            <p className="sub-tag">Google ID: {user.sub}</p>
-            {status === "sending" && (
-              <p className="status pending">Authenticating with backend...</p>
-            )}
-            {status === "success" && (
-              <p className="status ok">Backend authenticated successfully</p>
-            )}
-            {status === "error" && (
-              <p className="status fail">Backend authentication failed</p>
+          <div className="profile-section">
+            <div className="card profile-card">
+              <img src={user.picture} alt={user.name} className="avatar" />
+              <h2>{user.name}</h2>
+              <p>{user.email}</p>
+              <p className="sub-tag">Google ID: {user.sub}</p>
+              {status === "sending" && (
+                <p className="status pending">Authenticating with backend...</p>
+              )}
+              {status === "success" && (
+                <p className="status ok">Backend authenticated successfully</p>
+              )}
+              {status === "error" && (
+                <p className="status fail">Backend authentication failed</p>
+              )}
+            </div>
+
+            <div className="card payload-card">
+              <h3>Decoded JWT Payload</h3>
+              <pre>{JSON.stringify(user, null, 2)}</pre>
+            </div>
+
+            {backendResponse && (
+              <div className="card payload-card">
+                <h3>Backend Response</h3>
+                <pre>{JSON.stringify(backendResponse, null, 2)}</pre>
+              </div>
             )}
           </div>
         )}

@@ -44,6 +44,14 @@ h1 {
   justify-content: center;
 }
 
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 520px;
+}
+
 .profile-card {
   flex-direction: column;
   align-items: center;
@@ -93,4 +101,33 @@ h1 {
 
 .status.fail {
   color: #ef4444;
+}
+
+.payload-card {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.payload-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.payload-card pre {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--code-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
 }
