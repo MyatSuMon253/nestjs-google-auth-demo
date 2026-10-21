@@ -23,7 +23,10 @@ function decodeJwtPayload(token: string): UserProfile | null {
 function App() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [status, setStatus] = useState<string>("");
-  const [backendResponse, setBackendResponse] = useState<Record<string, unknown> | null>(null);
+  const [backendResponse, setBackendResponse] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
 
   const handleSuccess = (response: { credential?: string }) => {
     if (response.credential) {
@@ -54,12 +57,12 @@ function App() {
   };
 
   return (
-    <GoogleOAuthProvider clientId="73028571094-ok0geg8ovenb4bv3ash97eighk41kb77.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="997769782773-1kb5mbq1vmt1qleikvqbt1b6kbgqmagi.apps.googleusercontent.com">
       <div className="container">
         <h1>NestJS Google Auth Demo</h1>
         <p className="subtitle">
-          Sign in with Google and send the credential token to your NestJS backend
-          at <code>/auth/google-authentication</code>
+          Sign in with Google and send the credential token to your NestJS
+          backend at <code>/auth/google-authentication</code>
         </p>
 
         {!user ? (
